@@ -49,6 +49,8 @@
 #include "brpc/policy/consistent_hashing_load_balancer.h"
 #include "brpc/policy/hasher.h"
 #include "brpc/policy/dynpart_load_balancer.h"
+#include "brpc/policy/tag_round_robin_load_balancer.h"
+#include "brpc/policy/tag_consistent_hashing_load_balancer.h"
 
 // Compress handlers
 #include "brpc/compress.h"
@@ -123,6 +125,9 @@ struct GlobalExtensions {
         , ch_mh_lb(CONS_HASH_LB_MURMUR3)
         , ch_md5_lb(CONS_HASH_LB_MD5)
         , ch_ketama_lb(CONS_HASH_LB_KETAMA)
+        , tch_mh_lb(TAG_CONS_HASH_LB_MURMUR3)
+        , tch_md5_lb(TAG_CONS_HASH_LB_MD5)
+        , tch_ketama_lb(TAG_CONS_HASH_LB_KETAMA)
         , constant_cl(0) {
     }
     
@@ -148,6 +153,10 @@ struct GlobalExtensions {
     ConsistentHashingLoadBalancer ch_md5_lb;
     ConsistentHashingLoadBalancer ch_ketama_lb;
     DynPartLoadBalancer dynpart_lb;
+    TagRoundRobinLoadBalancer trr_lb;
+    TagConsistentHashingLoadBalancer tch_mh_lb;
+    TagConsistentHashingLoadBalancer tch_md5_lb;
+    TagConsistentHashingLoadBalancer tch_ketama_lb;
 
     AutoConcurrencyLimiter auto_cl;
     ConstantConcurrencyLimiter constant_cl;
@@ -374,6 +383,10 @@ static void GlobalInitializeOrDieImpl() {
     LoadBalancerExtension()->RegisterOrDie("c_md5", &g_ext->ch_md5_lb);
     LoadBalancerExtension()->RegisterOrDie("c_ketama", &g_ext->ch_ketama_lb);
     LoadBalancerExtension()->RegisterOrDie("_dynpart", &g_ext->dynpart_lb);
+    LoadBalancerExtension()->RegisterOrDie("trr", &g_ext->trr_lb);
+    LoadBalancerExtension()->RegisterOrDie("tc_murmurhash", &g_ext->tch_mh_lb);
+    LoadBalancerExtension()->RegisterOrDie("tc_md5", &g_ext->tch_md5_lb);
+    LoadBalancerExtension()->RegisterOrDie("tc_ketama", &g_ext->tch_ketama_lb);
 
     // Compress Handlers
     const CompressHandler gzip_compress =

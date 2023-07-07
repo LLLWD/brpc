@@ -41,6 +41,8 @@ public:
         bool has_request_code;
         uint64_t request_code;
         const ExcludedServers* excluded;
+        bool has_pfb_tag;
+        std::string pfb_tag;
     };
 
     struct SelectOut {

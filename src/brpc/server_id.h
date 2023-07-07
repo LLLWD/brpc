@@ -35,12 +35,15 @@ struct ServerId {
     explicit ServerId(SocketId id_in) : id(id_in) {}
     ServerId(SocketId id_in, const std::string& tag_in)
         : id(id_in), tag(tag_in) {}
+    ServerId(SocketId id_in, const std::string& tag_in, const std::string& pfb_tag_in)
+    : id(id_in), tag(tag_in), pfb_tag(pfb_tag_in) {}
 
     SocketId id;
     std::string tag;
+    std::string pfb_tag;
 };
 inline bool operator==(const ServerId& id1, const ServerId& id2)
-{ return id1.id == id2.id && id1.tag == id2.tag; }
+{ return id1.id == id2.id && id1.tag == id2.tag && id1.pfb_tag == id2.pfb_tag; }
 inline bool operator!=(const ServerId& id1, const ServerId& id2)
 { return !(id1 == id2); }
 inline bool operator<(const ServerId& id1, const ServerId& id2)

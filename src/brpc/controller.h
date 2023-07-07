@@ -144,6 +144,7 @@ friend void policy::ProcessThriftRequest(InputMessageBase*);
     static const uint32_t FLAGS_HEALTH_CHECK_CALL = (1 << 19);
     static const uint32_t FLAGS_PB_SINGLE_REPEATED_TO_ARRAY = (1 << 20);
     static const uint32_t FLAGS_MANAGE_HTTP_BODY_ON_ERROR = (1 << 21);
+    static const uint32_t FLAGS_REQUEST_TAG = (1 << 22);
 
 public:
     struct Inheritable {
@@ -238,6 +239,14 @@ public:
     }
     bool has_request_code() const { return has_flag(FLAGS_REQUEST_CODE); }
     uint64_t request_code() const { return _request_code; }
+
+    void set_request_tag(const std::string& pfb_tag) {
+        add_flag(FLAGS_REQUEST_TAG);
+        _request_tag = pfb_tag;
+    }
+    
+    bool has_request_tag() const { return has_flag(FLAGS_REQUEST_TAG); }
+    const std::string& request_tag() const { return _request_tag; }
     
     // Mutable header of http request.
     HttpHeader& http_request() {
@@ -629,6 +638,8 @@ private:
         uint64_t log_id;
         bool has_request_code;
         int64_t request_code;
+        bool has_request_tag;
+        std::string request_tag;
     };
 
     void SaveClientSettings(ClientSettings*) const;
@@ -775,6 +786,7 @@ private:
     uint64_t _request_code;
     SocketId _single_server_id;
     butil::intrusive_ptr<SharedLoadBalancer> _lb;
+    std::string _request_tag;
 
     // for passing parameters to created bthread, don't modify it otherwhere.
     CompletionInfo _tmp_completion_info;
