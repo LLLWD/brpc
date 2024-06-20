@@ -41,6 +41,7 @@ DEFINE_int32(nacos_connect_timeout_ms, 200,
 DEFINE_string(nacos_username, "", "nacos username");
 DEFINE_string(nacos_password, "", "nacos password");
 DEFINE_string(nacos_load_balancer, "rr", "nacos load balancer name");
+DEFINE_string(nacos_pfb_tag, "pfb_tag", "nacos instance metadata pfb tag K");
 
 int NacosNamingService::Connect() {
     ChannelOptions opt;
@@ -206,6 +207,20 @@ int NacosNamingService::GetServerNodes(const char *service_name,
         if (it_weight != host.MemberEnd() && it_weight->value.IsNumber()) {
             node.tag =
                 std::to_string(static_cast<long>(it_weight->value.GetDouble()));
+        }
+        
+        auto it_pfb_tag = host.FindMember("metadata");
+        if (it_pfb_tag != host.MemberEnd() && it_pfb_tag->value.IsObject()) {
+            const auto &metadata = it_pfb_tag->value;
+
+            auto it_key = metadata.FindMember(FLAGS_nacos_pfb_tag.c_str());
+            if (it_key != metadata.MemberEnd() && it_key->value.IsString()) {
+                node.pfb_tag = it_key->value.GetString();
+                LOG(INFO) << "get pfb_tag: " << node.pfb_tag << "for: " << ip.GetString() << ":" << port.GetInt();
+            } else {
+                node.pfb_tag = "";
+                LOG(INFO) << "dont get pfb_tag for: " << ip.GetString() << ":" << port.GetInt();
+            }
         }
 
         presence.insert(node);

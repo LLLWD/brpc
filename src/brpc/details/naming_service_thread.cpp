@@ -331,6 +331,8 @@ void NamingServiceThread::ServerNodeWithId2ServerId(
         ServerId socket;
         socket.id = it->id;
         socket.tag = it->node.tag;
+        socket.pfb_tag = it->node.pfb_tag;
+        LOG(INFO) << "node.pfb_tag is: " << it->node.pfb_tag;
         dst->push_back(socket);
     }
 }

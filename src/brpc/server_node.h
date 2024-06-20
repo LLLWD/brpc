@@ -39,6 +39,7 @@ struct ServerNode {
 
     butil::EndPoint addr;
     std::string tag;
+    std::string pfb_tag;
 };
 
 inline bool operator<(const ServerNode& n1, const ServerNode& n2)

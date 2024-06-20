@@ -1033,7 +1033,7 @@ void Controller::IssueRPC(int64_t start_realtime_us) {
     } else {
         LoadBalancer::SelectIn sel_in =
             { start_realtime_us, true,
-              has_request_code(), _request_code, _accessed };
+              has_request_code(), _request_code, _accessed, has_request_tag(), _request_tag };
         LoadBalancer::SelectOut sel_out(&tmp_sock);
         const int rc = _lb->SelectServer(sel_in, &sel_out);
         if (rc != 0) {
@@ -1273,6 +1273,8 @@ void Controller::SaveClientSettings(ClientSettings* s) const {
     s->log_id = log_id();
     s->has_request_code = has_request_code();
     s->request_code = _request_code;
+    s->has_request_tag = has_request_tag();
+    s->request_tag = _request_tag;
 }
 
 void Controller::ApplyClientSettings(const ClientSettings& s) {
@@ -1285,6 +1287,8 @@ void Controller::ApplyClientSettings(const ClientSettings& s) {
     set_log_id(s.log_id);
     set_flag(FLAGS_REQUEST_CODE, s.has_request_code);
     _request_code = s.request_code;
+    set_flag(FLAGS_REQUEST_TAG, s.has_request_tag);
+    _request_tag = s.request_tag;
 }
 
 int Controller::sub_count() const {
